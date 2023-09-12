@@ -1,9 +1,7 @@
 package com.jvcoding.contentproviders
 
 import android.Manifest
-import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
@@ -14,17 +12,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import coil.compose.AsyncImage
 import com.jvcoding.contentproviders.di.AppInjection.appModule
+import com.jvcoding.contentproviders.screens.ImageScreen
 import com.jvcoding.contentproviders.ui.theme.ContentProvidersTheme
 import com.jvcoding.contentproviders.viewmodels.ImageViewModel
 import org.koin.android.ext.android.inject
@@ -33,7 +30,6 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 
 class MainActivity : ComponentActivity() {
-    private val imageViewModel by inject<ImageViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ActivityCompat.requestPermissions(
@@ -48,40 +44,11 @@ class MainActivity : ComponentActivity() {
             modules(appModule)
         }
 
+        val imageViewModel by inject<ImageViewModel>()
+
         setContent {
-            imageViewModel.getImagesFromGalleryFromYesterdayToToday()
             ContentProvidersTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                    ) {
-                        items(imageViewModel.imageState) { image ->
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                AsyncImage(
-                                    model = image.contentUri,
-                                    contentDescription = null
-                                )
-                                Text(
-                                    text = image.displayName,
-                                    style = TextStyle(
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                        fontStyle = FontStyle.Italic
-                                    )
-                                )
-                            }
-                        }
-                    }
-                }
+                ImageScreen(imageViewModel)
             }
         }
     }
