@@ -1,4 +1,4 @@
-package com.jvcoding.contentproviders
+package com.jvcoding.contentproviders.domain.utils
 
 import java.util.Calendar
 
